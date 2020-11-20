@@ -2,7 +2,6 @@ import argparse
 import glob
 from pathlib import Path
 
-import mayavi.mlab as mlab
 import numpy as np
 import torch
 
@@ -10,7 +9,7 @@ from pcdet.config import cfg, cfg_from_yaml_file
 from pcdet.datasets import DatasetTemplate
 from pcdet.models import build_network, load_data_to_gpu
 from pcdet.utils import common_utils
-from visual_utils import visualize_utils as V
+#from visual_utils import visualize_utils as V
 
 
 class DemoDataset(DatasetTemplate):
@@ -90,11 +89,35 @@ def main():
             load_data_to_gpu(data_dict)
             pred_dicts, _ = model.forward(data_dict)
 
-            V.draw_scenes(
-                points=data_dict['points'][:, 1:], ref_boxes=pred_dicts[0]['pred_boxes'],
-                ref_scores=pred_dicts[0]['pred_scores'], ref_labels=pred_dicts[0]['pred_labels']
-            )
-            mlab.show(stop=True)
+            points=data_dict['points'][:, 1:]
+            ref_boxes=pred_dicts[0]['pred_boxes']
+            ref_scores=pred_dicts[0]['pred_scores']
+            ref_labels=pred_dicts[0]['pred_labels']
+            points_cp=points.cpu()
+            points_nu=points_cp.numpy()
+            ref_boxes_cp=ref_boxes.cpu()
+            ref_boxes_nu=ref_boxes_cp.numpy()
+            ref_scores_cp=ref_scores.cpu()
+            ref_scores_nu=ref_scores_cp.numpy()
+            ref_labels_cp=ref_labels.cpu()
+            ref_labels_nu=ref_labels_cp.numpy()
+            print(points.shape,ref_boxes.shape)
+            print(ref_scores.shape,ref_labels.shape)
+            #with open('./save1.npy', 'wb') as f:
+            #    np.save(f,points_nu)
+            #with open('./save2.npy', 'wb') as f:
+            #    np.save(f,ref_boxes_nu)
+            #with open('./save3.npy', 'wb') as f:
+            #    np.save(f,ref_scores_nu)
+            #with open('./save4.npy', 'wb') as f:
+            #    np.save(f,ref_labels_nu)
+                #np.array(points.shape).tofile(f)
+                #points.tofile(f)
+    #        V.draw_scenes(
+    #            points=data_dict['points'][:, 1:], ref_boxes=pred_dicts[0]['pred_boxes'],
+    #            ref_scores=pred_dicts[0]['pred_scores'], ref_labels=pred_dicts[0]['pred_labels']
+    #        )
+    #        mlab.show(stop=True)
 
     logger.info('Demo done.')
 
